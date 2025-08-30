@@ -63,7 +63,7 @@
 			switch(weapon_choice)
 				if("Estoc")
 					r_hand = /obj/item/rogueweapon/estoc
-					backr = /obj/item/gwstrap
+					backr = /obj/item/rogueweapon/scabbard/gwstrap
 				if("Longsword + Shield")
 					beltr = /obj/item/rogueweapon/scabbard/sword
 					r_hand = /obj/item/rogueweapon/sword/long
@@ -76,7 +76,7 @@
 					backr = /obj/item/rogueweapon/shield/tower/metal
 				if("Lucerne")
 					r_hand = /obj/item/rogueweapon/eaglebeak/lucerne
-					backr = /obj/item/gwstrap
+					backr = /obj/item/rogueweapon/scabbard/gwstrap
 				if("Battle Axe")
 					backr = /obj/item/rogueweapon/stoneaxe/battle
 				if("Lance + Kite Shield")
@@ -155,13 +155,13 @@
 					backl = /obj/item/rogueweapon/shield/iron
 				if("Billhook")
 					r_hand = /obj/item/rogueweapon/spear/billhook 
-					backl = /obj/item/gwstrap
+					backl = /obj/item/rogueweapon/scabbard/gwstrap
 				if("Halberd")
 					r_hand = /obj/item/rogueweapon/halberd
-					backl = /obj/item/gwstrap	
+					backl = /obj/item/rogueweapon/scabbard/gwstrap	
 				if("Greataxe")
 					r_hand = /obj/item/rogueweapon/greataxe
-					backl = /obj/item/gwstrap
+					backl = /obj/item/rogueweapon/scabbard/gwstrap
 			
 			ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
 			H.adjust_skillrank(/datum/skill/combat/polearms, 4, TRUE)
@@ -370,10 +370,10 @@
 /datum/status_effect/buff/order/brotherhood/on_apply()
 	. = ..()
 	to_chat(owner, span_blue("My commander orders me to stand proud for the brotherhood!"))
-	ADD_TRAIT(owner, TRAIT_NOPAIN, TRAIT_GENERIC)
+	ADD_TRAIT(owner, TRAIT_NOPAIN, id)
 
 /datum/status_effect/buff/order/onfeet/on_remove()
-	REMOVE_TRAIT(owner, TRAIT_NOPAIN, TRAIT_GENERIC)
+	REMOVE_TRAIT(owner, TRAIT_NOPAIN, id)
 	. = ..()
 
 
