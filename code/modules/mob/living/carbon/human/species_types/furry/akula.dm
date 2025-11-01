@@ -114,7 +114,7 @@
 	)
 
 /datum/species/akula/check_roundstart_eligible()
-	return TRUE
+	return FALSE // [CELADON-EDIT] Отключаем расу, по просьбе Evandel.
 
 /datum/species/akula/qualifies_for_rank(rank, list/features)
 	return TRUE
