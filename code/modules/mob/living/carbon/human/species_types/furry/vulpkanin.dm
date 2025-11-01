@@ -117,7 +117,7 @@
 	)
 
 /datum/species/vulpkanin/check_roundstart_eligible()
-	return TRUE
+	return FALSE // [CELADON-EDIT] Отключаем расу, по просьбе Evandel.
 
 /datum/species/vulpkanin/qualifies_for_rank(rank, list/features)
 	return TRUE
