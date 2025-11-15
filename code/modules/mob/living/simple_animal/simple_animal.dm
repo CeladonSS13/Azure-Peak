@@ -10,7 +10,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 	gender = PLURAL //placeholder
 
 	status_flags = CANPUSH
-
+	fire_stack_decay_rate = -3
 	var/icon_living = ""
 	///Icon when the animal is dead. Don't use animated icons for this.
 	var/icon_dead = ""
@@ -167,6 +167,10 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 
 	var/swinging = FALSE
 
+	var/familiar_headshot_link = null
+	var/familiar_ooc_notes = null
+	var/familiar_flavortext = null
+
 	buckle_lying = FALSE
 	cmode = 1
 
@@ -175,6 +179,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 
 	var/botched_butcher_results
 	var/perfect_butcher_results
+	var/list/inherent_spells = list()
 
 	///What distance should we be checking for interesting things when considering idling/deidling? Defaults to AI_DEFAULT_INTERESTING_DIST
 	var/interesting_dist = AI_DEFAULT_INTERESTING_DIST
@@ -195,6 +200,9 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 	set_new_cells()
 //	if(dextrous)
 //		AddComponent(/datum/component/personal_crafting)
+	for(var/spell in inherent_spells)
+		var/obj/effect/proc_holder/spell/newspell = new spell()
+		AddSpell(newspell)
 
 /mob/living/simple_animal/Destroy()
 	our_cells = null
@@ -225,6 +233,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 			playsound(loc,'sound/misc/eat.ogg', rand(30,60), TRUE)
 			qdel(O)
 			food = min(food + 30, 100)
+			adjustHealth(-rand(10,20))
 			if(tame && owner == user)
 				return
 			var/realchance = tame_chance
@@ -277,7 +286,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		move_to_delay = initial(move_to_delay)
 		return
 	var/health_deficiency = getBruteLoss() + getFireLoss()
-	if(health_deficiency >= ( maxHealth - (maxHealth*0.75) ))
+	if(health_deficiency >= ( maxHealth - (maxHealth*0.50) ))
 		move_to_delay = initial(move_to_delay) + 2
 	else
 		move_to_delay = initial(move_to_delay)
@@ -321,12 +330,6 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 			return FALSE
 		if((isturf(loc) || allow_movement_on_non_turfs) && (mobility_flags & MOBILITY_MOVE))		//This is so it only moves if it's not inside a closet, gentics machine, etc.
 			turns_since_move++
-			if(turns_since_move >= turns_per_move)
-				if(!(stop_automated_movement_when_pulled && pulledby)) //Some animals don't move when pulled
-					var/anydir = pick(GLOB.cardinals)
-					if(Process_Spacemove(anydir))
-						Move(get_step(src, anydir), anydir)
-						turns_since_move = 0
 			return 1
 
 /mob/living/simple_animal/proc/handle_automated_speech(override)
@@ -400,11 +403,11 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 	if(stat == DEAD)
 		var/obj/item/held_item = user.get_active_held_item()
 		if(held_item)
-			if((butcher_results || guaranteed_butcher_results) && held_item.get_sharpness() && held_item.wlength == WLENGTH_SHORT)
+			if((butcher_results || guaranteed_butcher_results) && ((held_item.get_sharpness() && held_item.wlength == WLENGTH_SHORT) || istype(held_item, /obj/item/contraption/shears)))
 				var/used_time = 3 SECONDS
 				var/on_meathook = FALSE
-				if(src.buckled && istype(src.buckled, /obj/structure/meathook))
-					on_meathook = TRUE
+				if((src.buckled && istype(src.buckled, /obj/structure/meathook))|| istype(held_item, /obj/item/contraption/shears))
+					on_meathook = TRUE //will work efficiently if they are using autosheers as well
 					used_time -= 3 SECONDS
 					visible_message("[user] begins to efficiently butcher [src]...")
 				else
@@ -412,7 +415,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 				if(user.mind)
 					used_time -= (user.get_skill_level(/datum/skill/labor/butchering) * 30)
 				playsound(src, 'sound/foley/gross.ogg', 100, FALSE)
-				if(do_after(user, 3 SECONDS, target = src))
+				if(used_time <= 0 || do_after(user, used_time, target = src))
 					butcher(user, on_meathook)
 
 	else if (stat != DEAD && istype(ssaddle, /obj/item/natural/saddle))		//Fallback saftey for saddles
@@ -434,7 +437,7 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 	var/botch_chance = 0
 	if(length(botched_butcher_results) && butchery_skill_level < SKILL_LEVEL_JOURNEYMAN)
 		botch_chance = 70 - (20 * butchery_skill_level) // 70% at unskilled, 20% lower for each level above it, 0% at journeyman or higher
-	
+
 	var/perfect_chance = 0
 	if(length(perfect_butcher_results))
 		switch(butchery_skill_level)
@@ -489,10 +492,12 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		for(var/j in 1 to amount)
 			var/obj/item/I = new path(Tsec)
 			I.add_mob_blood(src)
-			if(rotstuff && istype(I,/obj/item/reagent_containers/food/snacks))
-				var/obj/item/reagent_containers/food/snacks/F = I
-				F.become_rotten()
-		
+			if(istype(I,/obj/item/reagent_containers/food/snacks))
+				I.item_flags |= FRESH_FOOD_ITEM
+				if(rotstuff)
+					var/obj/item/reagent_containers/food/snacks/F = I
+					F.become_rotten()
+
 		if(user.mind)
 			user.mind.add_sleep_experience(/datum/skill/labor/butchering, user.STAINT * 0.5)
 		playsound(src, 'sound/foley/gross.ogg', 100, FALSE)
@@ -577,6 +582,8 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		..()
 
 /mob/living/simple_animal/proc/CanAttack(atom/the_target)
+	if(binded)
+		return FALSE
 	if(see_invisible < the_target.invisibility)
 		return FALSE
 	if(ismob(the_target))
@@ -589,19 +596,10 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 			return FALSE
 	return TRUE
 
-/mob/living/simple_animal/handle_fire()
-	. = ..()
-	if(!on_fire)
-		return TRUE
-	if(fire_stacks + divine_fire_stacks > 0)
-		apply_damage(5, BURN)
-		if(fire_stacks + divine_fire_stacks > 5)
-			apply_damage(10, BURN)
-
-//mob/living/simple_animal/IgniteMob()
+//mob/living/simple_animal/ignite_mob()
 //	return FALSE
 
-///mob/living/simple_animal/ExtinguishMob()
+///mob/living/simple_animal/extinguish_mob()
 //	return
 
 /mob/living/simple_animal/revive(full_heal = FALSE, admin_revive = FALSE)
@@ -641,20 +639,11 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 				continue
 			else if(!istype(M, childtype) && M.gender == MALE && !(M.flags_1 & HOLOGRAM_1)) //Better safe than sorry ;_;
 				partner = M
-				testing("[src] foudnpartner [M]")
-
-//		else if(isliving(M) && !faction_check_mob(M)) //shyness check. we're not shy in front of things that share a faction with us.
-//			testing("[src] wenotalon [M]")
-//			return //we never mate when not alone, so just abort early
-
 	if(alone && partner && children < 3)
 		var/childspawn = pickweight(childtype)
 		var/turf/target = get_turf(loc)
 		if(target)
 			return new childspawn(target)
-//			visible_message(span_warning("[src] finally gives birth."))
-//			playsound(src, 'sound/foley/gross.ogg', 100, FALSE)
-//			breedchildren--
 
 /mob/living/simple_animal/canUseTopic(atom/movable/M, be_close=FALSE, no_dexterity=FALSE, no_tk=FALSE)
 	if(incapacitated())
@@ -885,7 +874,8 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 			if(loc != oldloc)
 				var/obj/structure/mineral_door/MD = locate() in loc
 				if(MD && !MD.ridethrough)
-					violent_dismount(user)
+					if(!HAS_TRAIT(user, TRAIT_EQUESTRIAN))
+						violent_dismount(user)
 
 /mob/living/simple_animal/proc/violent_dismount(mob/living/user)
 	if(isliving(user))
@@ -917,11 +907,14 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		else
 			stack_trace("Something attempted to set simple animals AI to an invalid state: [togglestatus]")
 
-/mob/living/simple_animal/process(delta_time)
-	pass()
-
 /mob/living/simple_animal/proc/consider_wakeup()
-	pass()
+	for(var/datum/spatial_grid_cell/grid as anything in our_cells.member_cells)
+		if(length(grid.client_contents))
+			toggle_ai(AI_ON)
+			return TRUE
+
+	toggle_ai(AI_OFF)
+	return FALSE
 
 /mob/living/simple_animal/adjustHealth(amount, updating_health = TRUE, forced = FALSE)
 	. = ..()
@@ -937,6 +930,8 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		toggle_ai(initial(AIStatus))
 
 /mob/living/simple_animal/Move()
+	if(binded)
+		return FALSE
 	. = ..()
 //	if(!stat)
 //		eat_plants()
@@ -949,6 +944,8 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		food = max(food + 30, 100)
 
 /mob/living/simple_animal/Life()
+	if(!client && can_have_ai && (AIStatus == AI_Z_OFF || AIStatus == AI_OFF))
+		return
 	. = ..()
 	if(.)
 		if(food > 0)

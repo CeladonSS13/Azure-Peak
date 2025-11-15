@@ -95,8 +95,8 @@
 		if(L.stat == DEAD)
 			continue
 		if (L.mind)
-			var/datum/antagonist/vampirelord/lesser/V = L.mind.has_antag_datum(/datum/antagonist/vampirelord/lesser)
-			if (V && !V.disguised)
+			var/datum/antagonist/vampire/V = L.mind.has_antag_datum(/datum/antagonist/vampire)
+			if(V && SEND_SIGNAL(L, COMSIG_DISGUISE_STATUS))
 				is_vampire = TRUE
 			if (L.mind.has_antag_datum(/datum/antagonist/zombie))
 				is_zombie = TRUE
@@ -136,7 +136,7 @@
 	alert_type = /atom/movable/screen/alert/status_effect/churned
 	duration = 30 SECONDS
 	examine_text = "<b>SUBJECTPRONOUN is wreathed in a wild frenzy of ghostly motes!</b>"
-	effectedstats = list("strength" = -2, "constitution" = -2, "endurance" = -2, "speed" = -2)
+	effectedstats = list(STATKEY_STR = -2, STATKEY_CON = -2, STATKEY_WIL = -2, STATKEY_SPD = -2)
 	status_type = STATUS_EFFECT_REFRESH
 	var/datum/weakref/debuffer
 	var/outline_colour = "#33cabc"
@@ -232,7 +232,7 @@
 	var/outline_colour ="#929186" // A dull grey.
 	id = "necravow"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/necras_vow
-	effectedstats = list("constitution" = 2)
+	effectedstats = list(STATKEY_CON = 2)
 	duration = -1
 
 /datum/status_effect/buff/necras_vow/on_apply()

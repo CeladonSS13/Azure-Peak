@@ -81,6 +81,10 @@
 	var/cached_mailedto
 	var/trapped
 
+/obj/item/paper/examine()
+	. = ..()
+	. += span_info("Use a feather to write on it. You can create a two-page manuscript that can be turned into a book by writing on it and applying it to another piece of paper that also have something written on it.")
+
 /obj/item/paper/get_real_price()
 	if(info)
 		return 0
@@ -233,7 +237,7 @@
 		to_chat(user, span_warning("This parchment is full of strange symbols that start to glow. How odd. Wait-"))
 		sleep(5)
 		victim.adjust_fire_stacks(15)
-		victim.IgniteMob()
+		victim.ignite_mob()
 		victim.visible_message(span_danger("[user] bursts into flames upon reading [src]!"))
 	read(user)
 	if(rigged && (SSevents.holidays && SSevents.holidays[APRIL_FOOLS]))
@@ -374,7 +378,7 @@
 			to_chat(usr, span_warning("This parchment is full of strange symbols that start to glow. How odd. Wait-"))
 			sleep(5)
 			victim.adjust_fire_stacks(15)
-			victim.IgniteMob()
+			victim.ignite_mob()
 			victim.visible_message(span_danger("[usr] bursts into flames upon reading [src]!"))
 		read(usr)
 
@@ -406,8 +410,6 @@
 				addtofield(text2num(id), t) // He wants to edit a field, let him.
 			else
 				info += t // Oh, he wants to edit to the end of the file, let him.
-				testing("[length(info)]")
-				testing("[findtext(info, "\n")]")
 				updateinfolinks()
 			playsound(src, 'sound/items/write.ogg', 100, FALSE)
 			format_browse(info_links, usr)

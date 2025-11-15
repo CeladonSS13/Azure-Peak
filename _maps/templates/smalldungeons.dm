@@ -133,9 +133,9 @@
 		/obj/item/clothing/suit/roguetown/armor/chainmail = 1,
 		/obj/item/clothing/suit/roguetown/armor/chainmail/iron = 2,
 		/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk = 1,
-		/obj/item/clothing/suit/roguetown/armor/plate/half = 1,
+		/obj/item/clothing/suit/roguetown/armor/plate/cuirass = 1,
 		/obj/item/clothing/neck/roguetown/gorget = 1,
-		/obj/item/clothing/suit/roguetown/armor/plate/half/iron = 1,
+		/obj/item/clothing/suit/roguetown/armor/plate/cuirass/iron = 1,
 		/obj/item/clothing/head/roguetown/helmet/kettle = 1,
 		/obj/item/clothing/head/roguetown/helmet/leather = 2,
 		/obj/item/clothing/head/roguetown/helmet/horned = 1,
@@ -144,7 +144,7 @@
 		/obj/item/clothing/suit/roguetown/armor/plate/bikini = 1,
 		/obj/item/clothing/suit/roguetown/armor/plate = 1,
 		/obj/item/clothing/suit/roguetown/armor/longcoat = 2,
-		/obj/item/clothing/suit/roguetown/armor/plate/blacksteel_half_plate = 1,
+		/obj/item/clothing/suit/roguetown/armor/plate/cuirass/blacksteel = 1,
 
 
 		//food
@@ -318,9 +318,9 @@
 		/obj/item/clothing/suit/roguetown/armor/chainmail = 1,
 		/obj/item/clothing/suit/roguetown/armor/chainmail/iron = 2,
 		/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk = 1,
-		/obj/item/clothing/suit/roguetown/armor/plate/half = 1,
+		/obj/item/clothing/suit/roguetown/armor/plate/cuirass = 1,
 		/obj/item/clothing/neck/roguetown/gorget = 1,
-		/obj/item/clothing/suit/roguetown/armor/plate/half/iron = 1,
+		/obj/item/clothing/suit/roguetown/armor/plate/cuirass/iron = 1,
 		/obj/item/clothing/head/roguetown/helmet/kettle = 1,
 		/obj/item/clothing/head/roguetown/helmet/leather = 2,
 		/obj/item/clothing/head/roguetown/helmet/horned = 1,
@@ -329,7 +329,7 @@
 		/obj/item/clothing/suit/roguetown/armor/plate/bikini = 1,
 		/obj/item/clothing/suit/roguetown/armor/plate = 1,
 		/obj/item/clothing/suit/roguetown/armor/longcoat = 2,
-		/obj/item/clothing/suit/roguetown/armor/plate/blacksteel_half_plate = 1,
+		/obj/item/clothing/suit/roguetown/armor/plate/cuirass/blacksteel = 1,
 	)
 	lootcount = 1
 
@@ -366,7 +366,6 @@
 		/obj/item/book/granter/spell/blackstone/message = 3,
 		/obj/item/book/granter/spell/blackstone/ensnare = 2,
 		/obj/item/book/granter/spell/blackstone/lightning = 2,
-		/obj/item/book/granter/spell/blackstone/blindness = 2,
 		/obj/item/book/granter/spell/blackstone/invisibility = 2,
 		/obj/item/book/granter/spell/blackstone/greaterfireball = 1
 	)

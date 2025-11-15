@@ -96,9 +96,15 @@
 			return FALSE	//No, you don't get to feel good. You're a undead mob. Feel bad.
 		target.visible_message(span_info("[target] begins to twitch as warmth radiates from them!"), span_notice("The pain from my wounds fade, every new one being a mere, pleasent warmth!"))
 		phy.pain_mod *= 0.5	//Literally halves your pain modifier.
-		addtimer(VARSET_CALLBACK(phy, pain_mod, phy.pain_mod /= 0.5), 1 MINUTES)	//Adds back the 0.5 of pain, basically setting it back to 1.
+		addtimer(CALLBACK(src, PROC_REF(restore_pain_mod), phy), 1 MINUTES)
 		target.apply_status_effect(/datum/status_effect/buff/vitae)					//+2 Fortune and mood buff
 		return TRUE
+
+/obj/effect/proc_holder/spell/invoked/painkiller/proc/restore_pain_mod(datum/physiology/physiology)
+	if(!physiology)
+		return
+
+	physiology.pain_mod /= 0.5
 
 //T0 that tells the user the person's vice.
 /obj/effect/proc_holder/spell/invoked/baothavice
@@ -123,12 +129,14 @@
 	if(ishuman(targets[1]))
 		var/vice_found
 		var/mob/living/carbon/human/H = targets[1]
-		if(HAS_TRAIT(H, TRAIT_DECEIVING_MEEKNESS) && user.get_skill_level(/datum/skill/magic/holy) > SKILL_LEVEL_NOVICE)
+		if(HAS_TRAIT(H, TRAIT_DECEIVING_MEEKNESS) && user.get_skill_level(/datum/skill/magic/holy) <= SKILL_LEVEL_NOVICE)
 			if(!(H in fake_vices))
 				fake_vices[H] = pick(GLOB.character_flaws)
 				vice_found = fake_vices[H]
 			else
 				vice_found = fake_vices[H]
+			if(prob(50 + ((H.STAPER - 10) * 10)))
+				to_chat(H, span_warning("A pair of prying eyes were laid on me..."))
 		if(!vice_found)
 			vice_found = H.charflaw.name
 		to_chat(user, span_info("They are... [span_warning("a [vice_found]")]"))

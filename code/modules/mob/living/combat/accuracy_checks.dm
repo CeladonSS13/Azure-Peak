@@ -45,8 +45,6 @@
 	if(I)
 		if(I.wlength == WLENGTH_SHORT)
 			chance2hit += 10
-		if((I.wlength >= WLENGTH_LONG) && (used_intent.blade_class == BCLASS_PEEL))
-			chance2hit -= 20
 
 	if(user.STAPER > 10)
 		chance2hit += (min((user.STAPER-10)*8, 40))
@@ -89,11 +87,14 @@
 	if(!(mobility_flags & MOBILITY_STAND))
 		return FALSE
 	if(user.badluck(4))
-		var/list/usedp = list("Critical miss!", "Damn! Critical miss!", "No! Critical miss!", "It can't be! Critical miss!", "Xylix laughs at me! Critical miss!", "Bad luck! Critical miss!", "Curse creation! Critical miss!", "What?! Critical miss!")
-		to_chat(user, span_boldwarning("[pick(usedp)]"))
-		flash_fullscreen("blackflash2")
-		user.aftermiss()
+		badluckmessage(user)
 		return TRUE
+
+/proc/badluckmessage(mob/living/user)
+	var/static/list/usedp = list("Critical miss!", "Damn! Critical miss!", "No! Critical miss!", "It can't be! Critical miss!", "Xylix laughs at me! Critical miss!", "Bad luck! Critical miss!", "Curse creation! Critical miss!", "What?! Critical miss!")
+	to_chat(user, span_boldwarning("[pick(usedp)]"))
+	user.flash_fullscreen("blackflash2")
+	user.aftermiss()
 
 /proc/ranged_zone_difficulty(zone)
 	switch(zone)
