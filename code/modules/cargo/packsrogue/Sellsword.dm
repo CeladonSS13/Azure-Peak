@@ -49,7 +49,7 @@
 /datum/supply_pack/rogue/Sellsword/steelcuirass
 	name = "Steel Cuirass"
 	cost = 20
-	contains =  list(/obj/item/clothing/suit/roguetown/armor/plate/half)
+	contains =  list(/obj/item/clothing/suit/roguetown/armor/plate/cuirass)
 
 ///////////////////
 // WRISTS/GLOVES //
@@ -123,7 +123,7 @@
 /datum/supply_pack/rogue/Sellsword/bsteelcuirass
 	name = "Blacksteel Cuirass"
 	cost = 50
-	contains = list(/obj/item/clothing/suit/roguetown/armor/plate/blacksteel_half_plate)
+	contains = list(/obj/item/clothing/suit/roguetown/armor/plate/cuirass/blacksteel)
 
 /datum/supply_pack/rogue/Sellsword/Grenzelshirt
 	name = "Grenzel Shirt"
@@ -149,6 +149,11 @@
 	name = "Steel Zweihander"
 	cost = 60
 	contains = list(/obj/item/rogueweapon/greatsword/grenz)
+
+/datum/supply_pack/rogue/Sellsword/SFlamberge
+	name = "Steel Flamberge"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/greatsword/grenz/flamberge)
 
 //////////////////////
 // RANESHEN - RIDER //

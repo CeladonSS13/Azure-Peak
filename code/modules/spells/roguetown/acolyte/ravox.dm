@@ -79,7 +79,7 @@
 //Call to Arms - AoE buff for all people surrounding you.
 /obj/effect/proc_holder/spell/self/call_to_arms
 	name = "Call to Arms"
-	desc = "Grants you and all allies nearby a buff to their strength, endurance, and constitution."
+	desc = "Grants you and all allies nearby a buff to their strength, willpower, and constitution."
 	overlay_state = "call_to_arms"
 	recharge_time = 5 MINUTES
 	req_items = list(/obj/item/clothing/neck/roguetown/psicross)
@@ -134,8 +134,7 @@
 				var/datum/physiology/phy = human_target.physiology
 				phy.bleed_mod *= 1.5
 				phy.pain_mod *= 1.5
-				addtimer(VARSET_CALLBACK(phy, bleed_mod, phy.bleed_mod /= 1.5), 19 SECONDS)
-				addtimer(VARSET_CALLBACK(phy, pain_mod, phy.pain_mod /= 1.5), 19 SECONDS)
+				addtimer(CALLBACK(src, PROC_REF(restore_modifiers), phy), 19 SECONDS)
 				human_target.visible_message(span_danger("[target]'s wounds become inflammed as their vitality is sapped away!"), span_userdanger("Ravox inflammes my wounds and weakens my body!"))
 				return ..()
 			return FALSE
@@ -155,15 +154,22 @@
 					bleeder.woundpain = max(bleeder.sewn_woundpain, bleeder.woundpain * 0.25)
 					if(!isnull(bleeder.clotting_threshold) && bleeder.bleed_rate > bleeder.clotting_threshold)
 						var/difference = bleeder.bleed_rate - bleeder.clotting_threshold
-						bleeder.bleed_rate = max(bleeder.clotting_threshold, bleeder.bleed_rate - difference * situational_bonus)
+						bleeder.set_bleed_rate(max(bleeder.clotting_threshold, bleeder.bleed_rate - difference * situational_bonus))
 		else if(HAS_TRAIT(target, TRAIT_SIMPLE_WOUNDS))
 			for(var/datum/wound/bleeder in target.simple_wounds)
 				bleeder.woundpain = max(bleeder.sewn_woundpain, bleeder.woundpain * 0.25)
 				if(!isnull(bleeder.clotting_threshold) && bleeder.bleed_rate > bleeder.clotting_threshold)
 					var/difference = bleeder.bleed_rate - bleeder.clotting_threshold
-					bleeder.bleed_rate = max(bleeder.clotting_threshold, bleeder.bleed_rate - difference * situational_bonus)
+					bleeder.set_bleed_rate(max(bleeder.clotting_threshold, bleeder.bleed_rate - difference * situational_bonus))
 		return TRUE
 	return FALSE
+
+/obj/effect/proc_holder/spell/invoked/persistence/proc/restore_modifiers(datum/physiology/physiology)
+	if(!physiology)
+		return
+
+	physiology.bleed_mod /= 1.5
+	physiology.pain_mod /= 1.5
 
 /atom/movable/screen/alert/status_effect/buff/divine_strike
 	name = "Divine Strike"
@@ -201,7 +207,7 @@
 		if(ishuman(target))
 			var/mob/living/carbon/human/H = target
 			var/strdiff = user.STASTR - H.STASTR
-			var/enddiff = user.STAEND - H.STAEND
+			var/enddiff = user.STAWIL - H.STAWIL
 			var/condiff = user.STACON - H.STACON
 			var/spddiff = user.STASPD - H.STASPD
 			var/fordiff = user.STALUC - H.STALUC
@@ -242,7 +248,7 @@
 	overlay_state = "ravoxchallenge"
 	action_icon_state = "ravoxchallenge"
 	action_icon = 'icons/mob/actions/ravoxmiracles.dmi'
-	recharge_time = 20 MINUTES
+	recharge_time = 10 MINUTES
 	movement_interrupt = FALSE
 	chargedrain = 0
 	range = 5

@@ -49,7 +49,7 @@
 /datum/supply_pack/rogue/armor_steel/cuirass_steel
 	name = "Cuirass"
 	cost = 90 // 2 Steel
-	contains = list(/obj/item/clothing/suit/roguetown/armor/plate/half)
+	contains = list(/obj/item/clothing/suit/roguetown/armor/plate/cuirass)
 
 /datum/supply_pack/rogue/armor_steel/scalemail
 	name = "Scalemail"
@@ -205,11 +205,6 @@
 	name = "Mask"
 	cost = 50 // 1 Steel
 	contains = list(/obj/item/clothing/mask/rogue/facemask/steel)
-
-/datum/supply_pack/rogue/armor_steel/mask_steel_hound
-	name = "Mask, Hound"
-	cost = 50 // 1 Steel
-	contains = list(/obj/item/clothing/mask/rogue/facemask/steel/hound)
 
 /datum/supply_pack/rogue/armor_steel/steel/belt
 	name = "Belt"

@@ -125,3 +125,17 @@
 							/mob/living/simple_animal/hostile/retaliate/rogue/wolf/bobcat = 15,		//Annoying bastards
 							/mob/living/simple_animal/hostile/retaliate/rogue/direbear = 10,
 							/mob/living/simple_animal/hostile/retaliate/rogue/troll/bog = 5)			//RUH-ROH
+
+/obj/item/bait/spider
+	name = "silk bag of bloodbait"
+	desc = "Bait for my little pet!"
+	icon_state = "baits"
+	attracted_types = list(/mob/living/simple_animal/hostile/retaliate/rogue/drider/tame/saddled = 100)
+
+/obj/item/bait/leech
+	name = "bag of leechbait"
+	desc = "Bait that might attract a little pestran friend."
+	icon_state = "baitb"
+	attracted_types = list(/obj/item/leechtick = 43,
+							/mob/living/simple_animal/hostile/retaliate/rogue/direbear = 5,
+							/mob/living/simple_animal/hostile/retaliate/rogue/troll/bog = 2)

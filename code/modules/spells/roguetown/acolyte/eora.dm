@@ -8,7 +8,7 @@
 	icon_state = "peaceflower"
 	item_state = "peaceflower"
 	dropshrink = 0.9
-	slot_flags = ITEM_SLOT_HEAD
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK
 	body_parts_covered = NONE
 	dynamic_hair_suffix = ""
 	force = 0
@@ -602,10 +602,10 @@
 				else
 					to_chat(c, span_warning("A divine curse strikes you for destroying the sacred tree!"))
 					c.adjustFireLoss(100)
-					c.IgniteMob()
+					c.ignite_mob()
 					c.add_stress(/datum/stressevent/psycurse)
 			record_featured_stat(FEATURED_STATS_TREE_FELLERS, user)
-			GLOB.azure_round_stats[STATS_TREES_CUT]++
+			record_round_statistic(STATS_TREES_CUT)
 
 /obj/structure/eoran_pomegranate_tree/take_damage(damage_amount, damage_type = BRUTE, damage_flag = "", sound_effect = TRUE, attack_dir, armor_penetration = 0)
 	if(ash_offered)
@@ -838,7 +838,7 @@
 		return FALSE
 
 	// Eoran alignment check
-	if(!(user.patron.type == /datum/patron/divine/eora))
+	if(!(user.patron.type == /datum/patron/divine/eora) && !HAS_TRAIT(user, TRAIT_CHOSEN))
 		to_chat(user, span_warning("The fruit vanishes as you reach for it!"))
 		return FALSE
 
@@ -1091,7 +1091,7 @@
 		var/mob/living/carbon/human/H = eater
 		if(HAS_TRAIT(H, TRAIT_UNSEEMLY))
 			REMOVE_TRAIT(H, TRAIT_UNSEEMLY, TRAIT_VIRTUE)
-			H.change_stat("constitution", -1)
+			H.change_stat(STATKEY_CON, -1)
 			to_chat(eater, span_good("You feel your imperfections melt away, but your body feels more fragile."))
 
 // TIER 3
@@ -1146,6 +1146,8 @@
 				if(!target.mind || !target.mind.active)
 					continue
 				if(HAS_TRAIT(target, TRAIT_NECRAS_VOW))
+					continue
+				if(HAS_TRAIT(target, TRAIT_DNR))
 					continue
 				if(target.mob_biotypes & MOB_UNDEAD)
 					continue
@@ -1277,7 +1279,7 @@
 	desc = "Bestow a person with Eora's calm, if only for a little while."
 	sound = 'sound/magic/eora_bless.ogg'
 	devotion_cost = 80
-	recharge_time = 10 MINUTES
+	recharge_time = 5 MINUTES
 	miracle = TRUE
 	invocation_type = "shout"
 	invocations = list("Let the beauty of lyfe fill you whole.")
