@@ -20,7 +20,10 @@
 	armor_class = ARMOR_CLASS_LIGHT
 	chunkcolor = "#978151"
 
-/obj/item/clothing/suit/roguetown/armor/gambeson/councillor
+/obj/item/clothing/suit/roguetown/armor/gambeson/ComponentInitialize()
+	AddComponent(/datum/component/armour_filtering/positive, TRAIT_FENCERDEXTERITY)
+
+/obj/item/clothing/suit/roguetown/armor/gambeson/dark
 	color = "#646464"
 
 /obj/item/clothing/suit/roguetown/armor/gambeson/lord
@@ -102,8 +105,8 @@
 /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/otavan/attack_right(mob/user)
 	..()
 	if(!picked)
-		var/choice = input(user, "Choose a color.", "Otavan colors") as anything in colorlist
-		var/playerchoice = colorlist[choice]
+		var/choice = input(user, "Choose a color.", "Otavan colors") as anything in COLOR_MAP
+		var/playerchoice = COLOR_MAP[choice]
 		picked = TRUE
 		detail_color = playerchoice
 		detail_tag = "_detail"
@@ -114,7 +117,7 @@
 			H.update_icon()
 
 /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/otavan/Initialize()
-	. = ..()		
+	. = ..()
 	update_icon()
 
 /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/otavan/update_icon()
@@ -164,8 +167,8 @@
 /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/grenzelhoft/attack_right(mob/user)
 	..()
 	if(!picked)
-		var/choice = input(user, "Choose a color.", "Grenzelhoft colors") as anything in colorlist
-		var/playerchoice = colorlist[choice]
+		var/choice = input(user, "Choose a color.", "Grenzelhoft colors") as anything in COLOR_MAP
+		var/playerchoice = COLOR_MAP[choice]
 		picked = TRUE
 		detail_color = playerchoice
 		detail_tag = "_detail"
